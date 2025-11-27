@@ -71,6 +71,30 @@ def consultarSegurosResidenciais():
         return []
     finally:
         conexao.close()
+
+def consultarSeguroResidencialPorId(seguro_id):
+    """
+    Consulta e retorna os dados de um seguro residencial específico pelo ID.
+    Retorna um dicionário com os dados ou None se não encontrar.
+    """
+    conexao = conectaBD()
+    cursor = conexao.cursor()
+    try:
+        cursor.execute('SELECT * FROM seguro_residencial WHERE seguro_residencial_id = ?', (seguro_id,))
+        row = cursor.fetchone()
+        
+        if row:
+            colunas = ["seguro_residencial_id", "tipo", "endereco_id"]
+            seguro_dict = dict(zip(colunas, row))
+            return seguro_dict
+        else:
+            return None
+            
+    except sqlite3.Error as e:
+        print(f"Erro ao consultar seguro residencial por ID: {e}")
+        return None
+    finally:
+        conexao.close()
     
 def excluirSeguroResidencial(seguro_id):
     try:

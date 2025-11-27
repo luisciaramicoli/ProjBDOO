@@ -19,6 +19,7 @@ from Models.SeguroEmpresarial import SeguroEmpresarial
 from Models.SeguroVida import SeguroVida
 import datetime
 import pandas as pd
+from styles import apply_styles
 
 # 1. Configuração ABSOLUTA PRIMEIRO
 st.set_page_config(
@@ -26,6 +27,9 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="auto"
 )
+
+# Aplicar estilos profissionais
+st.markdown(apply_styles(), unsafe_allow_html=True)
 
 # 2. Configuração de imports DEPOIS da configuração
 sys.path.append(str(Path(__file__).parent))

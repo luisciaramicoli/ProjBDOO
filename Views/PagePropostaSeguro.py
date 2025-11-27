@@ -12,7 +12,6 @@ def show_proposta_seguro_page():
     if menu_op == "Incluir":
         st.subheader("Incluir Proposta de Seguro")
         with st.form(key="incluir_proposta"):
-            # Agrupando em colunas para melhor layout
             col1, col2, col3 = st.columns(3)
             with col1:
                 usuario_id = st.number_input("ID Usuário:", min_value=1, step=1)
@@ -41,7 +40,7 @@ def show_proposta_seguro_page():
                 valor_total_liquido = st.number_input("Valor Líquido Total:", min_value=0.0, format="%.2f")
                 valor_iof = st.number_input("Valor IOF:", min_value=0.0, format="%.2f")
                 status_aprovacao = st.checkbox("Proposta Aprovada?")
-                numero_apolice = st.checkbox("Número da Apólice Gerado?") # Assumindo boolean pelo diagrama
+                numero_apolice = st.checkbox("Número da Apólice Gerado?")
 
             submit_button = st.form_submit_button(label='Incluir')
 
@@ -64,7 +63,7 @@ def show_proposta_seguro_page():
         dados = propostaController.consultarPropostasSeguro()
         if dados:
             df = pd.DataFrame(dados)
-            st.dataframe(df) # Deixar rolar horizontalmente
+            st.dataframe(df)
         else:
             st.info("Nenhuma proposta cadastrada.")
 
@@ -99,7 +98,6 @@ def show_proposta_seguro_page():
             if item:
                 with st.form(key="alterar_proposta"):
                     col1, col2, col3 = st.columns(3)
-                    # Função auxiliar para tratar datas
                     def parse_date(date_str, default=datetime.date.today()):
                         if not date_str:
                             return default

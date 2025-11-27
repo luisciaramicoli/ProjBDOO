@@ -3,6 +3,8 @@ from Models.Reembolso import Reembolso
 
 def conectaBD():
     conexao = sqlite3.connect("Seguro.db")
+    # Ativa o uso de chaves estrangeiras
+    conexao.execute("PRAGMA foreign_keys = ON")
     return conexao
 
 def criarTabelaReembolso():
@@ -25,6 +27,10 @@ def criarTabelaReembolso():
         conexao.close()
 
 def incluirReembolso(reembolso):
+    """
+    Inclui um novo reembolso e retorna o ID do registro inserido.
+    Retorna o ID em caso de sucesso, ou None em caso de falha.
+    """
     conexao = conectaBD()
     cursor = conexao.cursor()
     try:
@@ -33,9 +39,12 @@ def incluirReembolso(reembolso):
             VALUES (?, ?, ?)
         """, (reembolso.get_seguro_auto(), reembolso.get_planos_de_seguro(), reembolso.get_valor()))
         conexao.commit()
-        print("Reembolso inserido com sucesso!")
+        novo_id = cursor.lastrowid
+        print(f"Reembolso inserido com sucesso! ID: {novo_id}")
+        return novo_id
     except sqlite3.Error as e:
         print(f"Erro ao inserir Reembolso: {e}")
+        return None
     finally:
         conexao.close()
 
@@ -57,6 +66,30 @@ def consultarReembolsos():
     except sqlite3.Error as e:
         print(f"Erro ao consultar reembolso: {e}")
         return []
+    finally:
+        conexao.close()
+
+def consultarReembolsoPorId(reembolso_id):
+    """
+    Consulta e retorna os dados de um reembolso específico pelo ID.
+    Retorna um dicionário com os dados ou None se não encontrar.
+    """
+    conexao = conectaBD()
+    cursor = conexao.cursor()
+    try:
+        cursor.execute('SELECT * FROM reembolso WHERE reembolso_id = ?', (reembolso_id,))
+        row = cursor.fetchone()
+        
+        if row:
+            colunas = ["reembolso_id", "seguro_auto", "planos_de_seguro", "valor"]
+            reembolso_dict = dict(zip(colunas, row))
+            return reembolso_dict
+        else:
+            return None
+            
+    except sqlite3.Error as e:
+        print(f"Erro ao consultar reembolso por ID: {e}")
+        return None
     finally:
         conexao.close()
     

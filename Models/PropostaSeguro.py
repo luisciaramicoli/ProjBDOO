@@ -84,4 +84,4 @@ class PropostaSeguro:
     def set_cobertura_limite(self, v): self._cobertura_limite = v
     def set_cobertura_premio(self, v): self._cobertura_premio = v
     def set_valor_total_liquido(self, v): self._valor_total_liquido = v
-    def set_valor_iof(self, v): self._valor_iof
+    def set_valor_iof(self, v): self._valor_iof = v

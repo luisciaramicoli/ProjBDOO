@@ -27,7 +27,6 @@ def show_usuario_page():
             submit_button = st.form_submit_button(label='Incluir')
 
             if submit_button:
-                # Trata campos opcionais que podem ser None
                 token_exp = reset_token_expiracao if reset_token_expiracao else None
                 token = reset_token if reset_token else None
                 social = nome_social if nome_social else None
@@ -98,7 +97,7 @@ def show_usuario_page():
                     submit_button = st.form_submit_button(label='Alterar')
 
                     if submit_button:
-                        senha_final = senha if senha else item['senha'] # Mantém a senha antiga se o campo for deixado em branco
+                        senha_final = senha if senha else item['senha']
                         
                         usuario = Usuario(usuario_id, nome, cpf, data_nascimento, telefone, email, senha_final, 
                                           endereco_id, reset_token or None, reset_token_expiracao or None, 

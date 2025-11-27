@@ -36,6 +36,10 @@ def criarTabelaUsuario():
         conexao.close()
 
 def incluirUsuario(usuario):
+    """
+    Inclui um novo usuário e retorna o ID do registro inserido.
+    Retorna o ID em caso de sucesso, ou None em caso de falha.
+    """
     conexao = conectaBD()
     cursor = conexao.cursor()
     try:
@@ -58,7 +62,9 @@ def incluirUsuario(usuario):
             usuario.get_nome_social()
         ))
         conexao.commit()
-        print("Usuário inserido com sucesso!")
+        novo_id = cursor.lastrowid
+        print(f"Usuário inserido com sucesso! ID: {novo_id}")
+        return novo_id
     except sqlite3.IntegrityError as e:
         print(f"Erro de integridade ao inserir usuário (CPF ou Email podem já existir): {e}")
         raise e # Propaga o erro para o main.py tratar
@@ -147,6 +153,34 @@ def alterarUsuario(usuario):
     finally:
         if conexao:
             conexao.close()
+
+def consultarUsuarioPorId(usuario_id):
+    """
+    Consulta e retorna todos os dados de um usuário pelo ID.
+    Retorna um dicionário com os dados ou None se não encontrar.
+    """
+    conexao = conectaBD()
+    cursor = conexao.cursor()
+    try:
+        cursor.execute('SELECT * FROM usuario WHERE usuario_id = ?', (usuario_id,))
+        row = cursor.fetchone()
+        
+        if row:
+            colunas = [
+                "usuario_id", "nome", "cpf", "data_nascimento", "telefone", 
+                "email", "senha", "endereco_id", "reset_token", 
+                "reset_token_expiracao", "tus_code", "nome_social"
+            ]
+            usuario_dict = dict(zip(colunas, row))
+            return usuario_dict
+        else:
+            return None
+            
+    except sqlite3.Error as e:
+        print(f"Erro ao consultar usuário por ID: {e}")
+        return None
+    finally:
+        conexao.close()
 
 def checarLogin(email, senha):
     """

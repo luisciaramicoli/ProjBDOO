@@ -3,6 +3,8 @@ from Models.PlanoSeguro import PlanoSeguro
 
 def conectaBD():
     conexao = sqlite3.connect("Seguro.db")
+    # Ativa o uso de chaves estrangeiras
+    conexao.execute("PRAGMA foreign_keys = ON")
     return conexao
 
 def criarTabelaPlanoSeguro():
@@ -26,6 +28,10 @@ def criarTabelaPlanoSeguro():
         conexao.close()
 
 def incluirPlanoSeguro(plano):
+    """
+    Inclui um novo plano de seguro e retorna o ID do registro inserido.
+    Retorna o ID em caso de sucesso, ou None em caso de falha.
+    """
     conexao = conectaBD()
     cursor = conexao.cursor()
     try:
@@ -34,9 +40,12 @@ def incluirPlanoSeguro(plano):
             VALUES (?, ?, ?, ?)
         """, (plano.get_nome_plano(), plano.get_valor_total(), plano.get_valor_parcela(), plano.get_detalhes()))
         conexao.commit()
-        print("Plano de Seguro inserido com sucesso!")
+        novo_id = cursor.lastrowid
+        print(f"Plano de Seguro inserido com sucesso! ID: {novo_id}")
+        return novo_id
     except sqlite3.Error as e:
         print(f"Erro ao inserir Plano de Seguro: {e}")
+        return None
     finally:
         conexao.close()
 

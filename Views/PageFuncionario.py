@@ -1,4 +1,3 @@
-# Views/PageFuncionario.py
 import streamlit as st
 import pandas as pd
 import Controllers.FuncionarioController as funcionarioController
@@ -8,46 +7,37 @@ from Models.Vendedor import Vendedor
 def show_funcionario_page():
     st.title('Cadastro de Funcionários')
 
-    # Menu de operações para Funcionário
     Page_Funcionario = st.sidebar.selectbox("Operações", ["Incluir", "Consultar", "Excluir", "Alterar"])
 
     if Page_Funcionario == "Incluir":
         tipo_funcionario = st.selectbox("Selecione o tipo de funcionário", ["FreeLancer", "Vendedor"])
 
         if tipo_funcionario == "FreeLancer":
-            # Criar instância de FreeLancer
             freelancer = FreeLancer(0, "", 0, 0.0)
             
-            # Usar setters
             freelancer.set_codigo(st.number_input("Digite seu código: ", min_value=0))
             freelancer.set_nome(st.text_input("Digite seu nome: "))
             freelancer.set_diasTrabalhados(st.number_input("Digite os dias trabalhados: ", min_value=0))
             freelancer.set_valorDia(st.number_input("Digite o valor por dia: ", min_value=0.0, format="%.2f"))
             
-            # Calcular salário
             salario = freelancer.calcularSalario()
             st.write(f"Salário Atual: R$ {salario:.2f}")
 
-            # Botão para inserir
             if st.button("Inserir"):
                 funcionarioController.incluirFuncionario(freelancer)
                 st.success("FreeLancer adicionado com sucesso!")
 
         elif tipo_funcionario == "Vendedor":
-            # Criar instância de Vendedor
             vendedor = Vendedor(0, "", 0.0, 0.0)
             
-            # Usar setters
             vendedor.set_codigo(st.number_input("Digite seu código: ", min_value=0))
             vendedor.set_nome(st.text_input("Digite seu nome: "))
             vendedor.set_salarioBase(st.number_input("Digite o salário base: ", min_value=0.0, format="%.2f"))
             vendedor.set_comissao(st.number_input("Digite a comissão: ", min_value=0.0, format="%.2f"))
             
-            # Calcular salário
             salario = vendedor.calcularSalario()
             st.write(f"Salário Atual: R$ {salario:.2f}")
 
-            # Botão para inserir
             if st.button("Inserir"):
                 funcionarioController.incluirFuncionario(vendedor)
                 st.success("Vendedor adicionado com sucesso!")
@@ -56,7 +46,6 @@ def show_funcionario_page():
         if st.button("Consultar"):
             dados = funcionarioController.consultarFuncionario()
             if dados:
-                # Formatação dos dados
                 for item in dados:
                     for key in ["Valor Dia", "Salário Base", "Comissão", "Salário Calculado"]:
                         if item[key] is not None:
@@ -103,7 +92,6 @@ def show_funcionario_page():
 
             if funcionario_data:
                 if funcionario_data["Tipo"] == "FreeLancer":
-                    # Criar instância de FreeLancer com os dados atuais
                     funcionario = FreeLancer(
                         funcionario_data["Código"],
                         funcionario_data["Nome"],
@@ -111,7 +99,6 @@ def show_funcionario_page():
                         funcionario_data["Valor Dia"]
                     )
                 else:
-                    # Criar instância de Vendedor com os dados atuais
                     funcionario = Vendedor(
                         funcionario_data["Código"],
                         funcionario_data["Nome"],
@@ -120,7 +107,6 @@ def show_funcionario_page():
                     )
 
                 with st.form(key="alteraFuncionario"):
-                    # Usar setters para atualizar os valores
                     st.write(f"Tipo: {funcionario_data['Tipo']}")
                     funcionario.set_codigo(st.number_input("Código: ", min_value=0, value=funcionario.get_codigo()))
                     funcionario.set_nome(st.text_input("Nome: ", value=funcionario.get_nome()))
@@ -143,13 +129,11 @@ def show_funcionario_page():
                                                                format="%.2f", 
                                                                value=funcionario.get_comissao()))
 
-                    # Mostrar salário calculado
                     salario = funcionario.calcularSalario()
                     st.write(f"Salário Calculado: R$ {salario:.2f}")
 
                     if st.form_submit_button("Confirmar Alterações"):
                         try:
-                            # Preparar dados para atualização
                             dados_atualizados = {
                                 "Código": funcionario.get_codigo(),
                                 "Nome": funcionario.get_nome(),

@@ -54,6 +54,10 @@ def criarTabelaPropostaSeguro():
         conexao.close()
 
 def incluirPropostaSeguro(proposta):
+    """
+    Inclui uma nova proposta de seguro e retorna o ID do registro inserido.
+    Retorna o ID em caso de sucesso, ou None em caso de falha.
+    """
     conexao = conectaBD()
     cursor = conexao.cursor()
     try:
@@ -92,9 +96,12 @@ def incluirPropostaSeguro(proposta):
             proposta.get_valor_iof()
         ))
         conexao.commit()
-        print("PropostaSeguro inserida com sucesso!")
+        novo_id = cursor.lastrowid
+        print(f"PropostaSeguro inserida com sucesso! ID: {novo_id}")
+        return novo_id
     except sqlite3.Error as e:
         print(f"Erro ao inserir PropostaSeguro: {e}")
+        return None
     finally:
         conexao.close()
 
@@ -153,6 +160,30 @@ def consultarPropostasPorUsuarioId(usuario_id):
     except sqlite3.Error as e:
         print(f"Erro ao consultar propostas por usuário: {e}")
         return []
+    finally:
+        conexao.close()
+
+def consultarPropostaPorId(proposta_id):
+    """
+    Consulta e retorna os dados de uma proposta específica pelo ID.
+    Retorna um dicionário com os dados ou None se não encontrar.
+    """
+    conexao = conectaBD()
+    cursor = conexao.cursor()
+    try:
+        cursor.execute('SELECT * FROM propostas_seguro WHERE propostas_seguro_id = ?', (proposta_id,))
+        row = cursor.fetchone()
+        
+        if row:
+            colunas = _get_colunas_proposta()
+            proposta_dict = dict(zip(colunas, row))
+            return proposta_dict
+        else:
+            return None
+            
+    except sqlite3.Error as e:
+        print(f"Erro ao consultar proposta por ID: {e}")
+        return None
     finally:
         conexao.close()
     

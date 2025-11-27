@@ -11,9 +11,7 @@ def show_reembolso_page():
     if menu_op == "Incluir":
         st.subheader("Incluir Reembolso")
         with st.form(key="incluir_reembolso"):
-            # Estes campos parecem ser FKs, mas estão como VARCHAR no seu diagrama. 
-            # Se forem IDs, mude para st.number_input
-            seguro_auto = st.text_input("ID Seguro Auto (referência):") 
+            seguro_auto = st.text_input("ID Seguro Auto (referência):")
             planos_de_seguro = st.text_input("ID Plano de Seguro (referência):")
             valor = st.number_input("Valor do Reembolso:", min_value=0.0, format="%.2f")
 

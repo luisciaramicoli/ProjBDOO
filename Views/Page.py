@@ -11,10 +11,8 @@ from Views.PageReembolso import show_reembolso_page
 from Views.PagePropostaSeguro import show_proposta_seguro_page
 from Views.PageApolice import show_apolice_page
 
-# Configuração da página
 st.set_page_config(layout="wide")
 
-# Menu principal
 st.sidebar.title("Menu Principal - Seguradora")
 pagina = st.sidebar.selectbox("Selecione a Tabela", [
     "Usuários", 
@@ -30,7 +28,6 @@ pagina = st.sidebar.selectbox("Selecione a Tabela", [
     "Apólices"
 ])
 
-# Navegação entre as páginas
 if pagina == "Usuários":
     show_usuario_page()
 elif pagina == "Endereços":
