@@ -10,6 +10,7 @@ import Controllers.SeguroAutoController as autoController
 import Controllers.SeguroResidencialController as residencialController
 import Controllers.SeguroEmpresarialController as empresarialController
 import Controllers.SeguroVidaController as vidaController
+import Controllers.CorretorController as corretorController
 from Models.Usuario import Usuario
 from Models.Endereco import Endereco
 from Models.PropostaSeguro import PropostaSeguro
@@ -205,7 +206,16 @@ def show_solicitar_proposta():
                     seguro = SeguroVida(None, atividade, endereco_id) 
                     seguro_vida_id = vidaController.incluirSeguroVida(seguro)
                 
-                # 2. Criar a Proposta de Seguro
+                # 2. Obter um corretor válido
+                corretores_lista = corretorController.consultarCorretores()
+                if not corretores_lista:
+                    st.error("Erro interno: Nenhum corretor disponível para processar a proposta.")
+                    return
+                
+                # Seleciona o primeiro corretor disponível (pode ser aprimorado com lógica de distribuição)
+                corretor_id_selecionado = corretores_lista[0]['id_corretor']
+
+                # 3. Criar a Proposta de Seguro
                 hoje = datetime.date.today()
                 proposta = PropostaSeguro(
                     None, 
@@ -215,7 +225,7 @@ def show_solicitar_proposta():
                     seguro_residencial_id=seguro_residencial_id, 
                     seguro_empresarial_id=seguro_empresarial_id, 
                     seguro_vida_id=seguro_vida_id, 
-                    corretor_id=1, # ID Fixo 1 (Admin/Corretor Padrão) - Ajustar se necessário
+                    corretor_id=corretor_id_selecionado, 
                     nome_plano=plano_obj['nome_plano'], 
                     valor_parcela=plano_obj['valor_parcela'], 
                     num_parcela=0, 
@@ -234,8 +244,11 @@ def show_solicitar_proposta():
                     valor_iof=plano_obj['valor_total'] * 0.0738 # Exemplo IOF 7.38%
                 )
                 
-                propostaController.incluirPropostaSeguro(proposta)
-                st.success("Proposta enviada com sucesso! Você pode acompanhá-la em 'Minhas Propostas'.")
+                novo_id_proposta = propostaController.incluirPropostaSeguro(proposta)
+                if novo_id_proposta:
+                    st.success("Proposta enviada com sucesso! Você pode acompanhá-la em 'Minhas Propostas'.")
+                else:
+                    st.error("Erro ao registrar a proposta. Verifique os dados e tente novamente.")
 
             except Exception as e:
                 st.error(f"Erro ao criar proposta: {e}")
